@@ -62,3 +62,6 @@ ffplay http://192.168.8.208:18080/live/test.flv
 ffplay http://192.168.8.208:18080/live/test.flv
 
 http://192.168.8.14:18090/live?src=a&port=1935&app=myapp&stream=test
+
+rtmp://192.168.8.14:1935/myapp/test
+http://192.168.8.14:18090/live?port=1935&app=myapp&stream=test

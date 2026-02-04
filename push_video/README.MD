@@ -89,3 +89,59 @@ ffmpeg -stream_loop -1 -re -i live.mp4 \
 # 拉代理服务器的流
 ffplay http://192.168.8.14:18090/live?src=a&port=1935&app=myapp&stream=test
 ```
+
+# 方案二
+
+源站的的RTMP 二次推送到代理(RTMP + HTTP-FLV) 浏览器查看 代理服务器的数据
+
+```
+
+
+源站 A(RTMP) -> 代理(RTMP + HTTP-FLV) <- 浏览器 
+
+源站 B(RTMP) ->
+```
+
+源站配置
+```conf
+rtmp {
+    server {
+        listen 1935;
+        chunk_size 4096;
+
+        application myapp {
+            live on;
+            record off;
+
+            # 🔥 二次推送到代理
+            push rtmp://proxy_ip/myapp;
+        }
+    }
+}
+```
+代理配置
+```conf
+rtmp {
+    server {
+        listen 1935;
+        chunk_size 4096;
+
+        application live {
+            live on;
+            record off;
+        }
+    }
+}
+
+http {
+    server {
+        listen 8080;
+
+        location /myapp {
+            flv_live on;
+            add_header Cache-Control no-cache;
+        }
+    }
+}
+```
+
